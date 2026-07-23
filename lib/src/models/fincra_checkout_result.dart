@@ -2,7 +2,7 @@ import 'fincra_response.dart';
 import 'fincra_error.dart';
 
 /// Represents the possible outcomes of a Fincra Checkout session.
-abstract class FincraCheckoutResult {}
+sealed class FincraCheckoutResult {}
 
 /// Returned when the payment is successful.
 class FincraCheckoutSuccess extends FincraCheckoutResult {

@@ -24,6 +24,25 @@ class FincraPaymentResponse {
   }
 
   @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+  
+    return other is FincraPaymentResponse &&
+      other.reference == reference &&
+      other.transactionId == transactionId &&
+      other.status == status &&
+      other.message == message;
+  }
+
+  @override
+  int get hashCode {
+    return reference.hashCode ^
+      transactionId.hashCode ^
+      status.hashCode ^
+      message.hashCode;
+  }
+
+  @override
   String toString() {
     return 'FincraPaymentResponse(reference: $reference, transactionId: $transactionId, status: $status, message: $message)';
   }

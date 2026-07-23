@@ -28,7 +28,7 @@ class CheckoutExamplePage extends StatelessWidget {
     // In a real app, this URL is obtained from your backend by calling the Fincra API.
     // Ensure that you set a redirectUrl during the Fincra backend API call so that 
     // Fincra redirects back with the status parameters appended.
-    const mockCheckoutUrl = 'https://checkout.sandbox.fincra.com/some_payment_session';
+    const mockCheckoutUrl = 'https://sandbox-checkout.fincra.com/pay/fcr-p-5b691d473d';
 
     final result = await FincraCheckout.open(
       context,
@@ -38,27 +38,31 @@ class CheckoutExamplePage extends StatelessWidget {
     );
 
     if (context.mounted) {
-      if (result is FincraCheckoutSuccess) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Payment Successful! Ref: ${result.response.reference}'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else if (result is FincraCheckoutError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Payment Failed: ${result.error.message}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      } else if (result is FincraCheckoutCancelled) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment Cancelled by User'),
-            backgroundColor: Colors.orange,
-          ),
-        );
+      switch (result) {
+        case FincraCheckoutSuccess():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Payment Successful! Ref: ${result.response.reference}'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          break;
+        case FincraCheckoutError():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Payment Failed: ${result.error.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          break;
+        case FincraCheckoutCancelled():
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Payment Cancelled by User'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          break;
       }
     }
   }

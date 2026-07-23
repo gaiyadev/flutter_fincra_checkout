@@ -10,6 +10,9 @@ class CheckoutWebView extends StatefulWidget {
   final String? redirectUrl;
   final Color? appBarBackgroundColor;
   final String? appBarTitle;
+  final Widget? loadingWidget;
+  final Widget? closeIcon;
+  final bool showCancelConfirmationDialog;
 
   const CheckoutWebView({
     super.key,
@@ -17,6 +20,9 @@ class CheckoutWebView extends StatefulWidget {
     this.redirectUrl,
     this.appBarBackgroundColor,
     this.appBarTitle,
+    this.loadingWidget,
+    this.closeIcon,
+    this.showCancelConfirmationDialog = false,
   });
 
   @override
@@ -27,6 +33,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _hasCompleted = false;
+  bool _isPopping = false;
 
   @override
   void initState() {
@@ -71,33 +78,77 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
     _hasCompleted = true;
 
     final params = UrlHandler.extractResponseParams(url);
-    final status = params['status']?.toLowerCase();
+    // If we reached the redirect URL, Fincra might not append the status parameter
+    // in sandbox, so we safely assume success if it's missing.
+    final status = params['status']?.toLowerCase() ?? 'success';
     
     if (status == 'success' || status == 'successful') {
       final response = FincraPaymentResponse.fromUrlParams(params);
       Navigator.of(context).pop(FincraCheckoutSuccess(response));
     } else {
       final err = FincraPaymentError(
-        code: status ?? 'unknown_error',
+        code: status,
         message: params['message'] ?? 'Payment failed',
       );
       Navigator.of(context).pop(FincraCheckoutError(err));
     }
   }
 
-  void _handleCancellation() {
+  void _handleCancellation() async {
     if (_hasCompleted) return;
+    
+    if (widget.showCancelConfirmationDialog) {
+      final shouldCancel = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Cancel Payment?'),
+          content: const Text('Are you sure you want to cancel this payment?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
+        ),
+      );
+      
+      if (shouldCancel != true || !mounted) {
+        return;
+      }
+    }
+    
+    if (!mounted) return;
+
     _hasCompleted = true;
-    Navigator.of(context).pop(FincraCheckoutCancelled());
+    
+    if (widget.showCancelConfirmationDialog) {
+      setState(() {
+        _isPopping = true;
+      });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pop(FincraCheckoutCancelled());
+        }
+      });
+    } else {
+      Navigator.of(context).pop(FincraCheckoutCancelled());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: widget.showCancelConfirmationDialog ? _isPopping : true,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop) return;
-        _hasCompleted = true;
+        if (!didPop) {
+          _handleCancellation();
+        } else {
+          _hasCompleted = true;
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -105,16 +156,22 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           elevation: 0,
           backgroundColor: widget.appBarBackgroundColor,
           leading: IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: _handleCancellation,
+            icon: widget.closeIcon ?? const Icon(Icons.close),
+            onPressed: () {
+              if (widget.showCancelConfirmationDialog) {
+                Navigator.maybePop(context);
+              } else {
+                _handleCancellation();
+              }
+            },
           ),
         ),
         body: Stack(
           children: [
             WebViewWidget(controller: _controller),
             if (_isLoading)
-              const Center(
-                child: CircularProgressIndicator(),
+              Center(
+                child: widget.loadingWidget ?? const CircularProgressIndicator(),
               ),
           ],
         ),

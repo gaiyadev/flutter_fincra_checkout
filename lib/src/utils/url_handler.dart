@@ -5,12 +5,13 @@ class UrlHandler {
     if (uri == null) return false;
 
     if (expectedRedirectUrl != null && expectedRedirectUrl.isNotEmpty) {
-      return url.startsWith(expectedRedirectUrl) &&
-          uri.queryParameters.containsKey('status');
+      // If the developer provided an expected redirect URL, ANY navigation to it 
+      // means the Fincra flow has finished. We shouldn't strictly enforce 'status'
+      return url.startsWith(expectedRedirectUrl);
     }
 
-    // Fincra appends `status` and `reference` to the redirect URL
-    return uri.queryParameters.containsKey('status') &&
+    // Fallback if no redirect URL was given: Fincra usually appends `status` and `reference`
+    return (uri.queryParameters.containsKey('status') || uri.queryParameters.containsKey('payment_status')) &&
         uri.queryParameters.containsKey('reference');
   }
 

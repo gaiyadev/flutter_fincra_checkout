@@ -62,17 +62,36 @@ Future<void> _startPayment(BuildContext context) async {
     checkoutUrl: checkoutUrl,
     redirectUrl: "https://your-backend.com/webhook", // Optional: secure URL interception
     appBarTitle: "Complete Payment", // Optional UI Customization
+    showCancelConfirmationDialog: true, // Prevents accidental closing
+    closeIcon: const Icon(Icons.arrow_back), // Custom close icon
+    loadingWidget: const CircularProgressIndicator(color: Colors.red), // Custom loader
   );
   
-  if (result is FincraCheckoutSuccess) {
-    print("Payment Success! Reference: ${result.response.reference}");
-    // Verify payment status with your backend here
-  } else if (result is FincraCheckoutError) {
-    print("Payment Failed: ${result.error.message}");
-  } else if (result is FincraCheckoutCancelled) {
-    print("User cancelled the payment");
+  switch (result) {
+    case FincraCheckoutSuccess():
+      print("Payment Success! Reference: ${result.response.reference}");
+      // Verify payment status with your backend here
+      break;
+    case FincraCheckoutError():
+      print("Payment Failed: ${result.error.message}");
+      break;
+    case FincraCheckoutCancelled():
+      print("User cancelled the payment");
+      break;
   }
 }
+```
+
+### Advanced: Custom Layout
+
+If you want full control over the layout (e.g., embedding the checkout in a Bottom Sheet instead of a full screen), you can use the raw `CheckoutWebView` widget directly.
+
+```dart
+CheckoutWebView(
+  checkoutUrl: url,
+  redirectUrl: "https://your-backend.com/webhook",
+  appBarTitle: "Secure Payment",
+)
 ```
 
 ## Models
