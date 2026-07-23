@@ -53,7 +53,10 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
             });
           },
           onNavigationRequest: (NavigationRequest request) {
-            if (UrlHandler.isCompletionUrl(request.url, expectedRedirectUrl: widget.redirectUrl)) {
+            if (UrlHandler.isCompletionUrl(
+              request.url,
+              expectedRedirectUrl: widget.redirectUrl,
+            )) {
               _handleCompletion(request.url);
               return NavigationDecision.prevent;
             }
@@ -81,7 +84,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
     // If we reached the redirect URL, Fincra might not append the status parameter
     // in sandbox, so we safely assume success if it's missing.
     final status = params['status']?.toLowerCase() ?? 'success';
-    
+
     if (status == 'success' || status == 'successful') {
       final response = FincraPaymentResponse.fromUrlParams(params);
       Navigator.of(context).pop(FincraCheckoutSuccess(response));
@@ -96,7 +99,7 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
 
   void _handleCancellation() async {
     if (_hasCompleted) return;
-    
+
     if (widget.showCancelConfirmationDialog) {
       final shouldCancel = await showDialog<bool>(
         context: context,
@@ -115,16 +118,16 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
           ],
         ),
       );
-      
+
       if (shouldCancel != true || !mounted) {
         return;
       }
     }
-    
+
     if (!mounted) return;
 
     _hasCompleted = true;
-    
+
     if (widget.showCancelConfirmationDialog) {
       setState(() {
         _isPopping = true;
@@ -171,7 +174,8 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
             WebViewWidget(controller: _controller),
             if (_isLoading)
               Center(
-                child: widget.loadingWidget ?? const CircularProgressIndicator(),
+                child:
+                    widget.loadingWidget ?? const CircularProgressIndicator(),
               ),
           ],
         ),

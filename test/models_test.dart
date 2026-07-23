@@ -11,9 +11,9 @@ void main() {
         'status': 'success',
         'message': 'Payment successful',
       };
-      
+
       final response = FincraPaymentResponse.fromUrlParams(params);
-      
+
       expect(response.reference, 'REF123');
       expect(response.transactionId, 'TXN123');
       expect(response.status, 'success');
@@ -23,7 +23,7 @@ void main() {
 
     test('FincraPaymentError instantiates correctly', () {
       final error = FincraPaymentError(code: '400', message: 'Bad request');
-      
+
       expect(error.code, '400');
       expect(error.message, 'Bad request');
     });
