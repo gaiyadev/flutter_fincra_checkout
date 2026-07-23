@@ -29,7 +29,7 @@ class CheckoutExamplePage extends StatelessWidget {
     // Ensure that you set a redirectUrl during the Fincra backend API call so that
     // Fincra redirects back with the status parameters appended.
     const mockCheckoutUrl =
-        'https://sandbox-checkout.fincra.com/pay/fcr-p-6d4f2c6101';
+        'https://sandbox-checkout.fincra.com/pay/fcr-p-73d48cb535';
 
     final result = await FincraCheckout.open(
       context,
