@@ -1,6 +1,6 @@
 name: flutter_fincra_checkout
-description: "A community Flutter SDK wrapper for Fincra Checkout with in-app WebView support and custom transaction references."
-version: 0.0.2
+description: "An unofficial Flutter SDK for integrating Fincra Checkout. Seamlessly process payments via an in-app WebView, handle secure redirects, and capture transaction results."
+version: 0.0.3
 repository: https://github.com/gaiyadev/flutter_fincra_checkout
 
 topics:

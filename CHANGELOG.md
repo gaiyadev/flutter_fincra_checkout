@@ -1,3 +1,7 @@
+## 0.0.3
+
+* Refined package description for improved SEO and clarity.
+
 ## 0.0.2
 
 * Added search keywords (topics) to `pubspec.yaml` for better discoverability.
