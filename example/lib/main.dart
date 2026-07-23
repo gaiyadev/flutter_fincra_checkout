@@ -26,9 +26,10 @@ class CheckoutExamplePage extends StatelessWidget {
 
   Future<void> _startPayment(BuildContext context) async {
     // In a real app, this URL is obtained from your backend by calling the Fincra API.
-    // Ensure that you set a redirectUrl during the Fincra backend API call so that 
+    // Ensure that you set a redirectUrl during the Fincra backend API call so that
     // Fincra redirects back with the status parameters appended.
-    const mockCheckoutUrl = 'https://sandbox-checkout.fincra.com/pay/fcr-p-5b691d473d';
+    const mockCheckoutUrl =
+        'https://sandbox-checkout.fincra.com/pay/your-unique-session-id';
 
     final result = await FincraCheckout.open(
       context,
@@ -42,7 +43,9 @@ class CheckoutExamplePage extends StatelessWidget {
         case FincraCheckoutSuccess():
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Payment Successful! Ref: ${result.response.reference}'),
+              content: Text(
+                'Payment Successful! Ref: ${result.response.reference}',
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -70,19 +73,14 @@ class CheckoutExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Fincra SDK Example'),
-      ),
+      appBar: AppBar(title: const Text('Fincra SDK Example')),
       body: Center(
         child: ElevatedButton(
           onPressed: () => _startPayment(context),
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
           ),
-          child: const Text(
-            'Pay with Fincra',
-            style: TextStyle(fontSize: 18),
-          ),
+          child: const Text('Pay with Fincra', style: TextStyle(fontSize: 18)),
         ),
       ),
     );
