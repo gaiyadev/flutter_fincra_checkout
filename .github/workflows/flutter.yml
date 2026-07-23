@@ -1,10 +1,10 @@
-name: Flutter CI
+name: Flutter CI (flutter_fincra_checkout)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "development" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "development" ]
 
 jobs:
   build:

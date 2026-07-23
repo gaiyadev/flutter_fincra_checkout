@@ -29,13 +29,31 @@ class CheckoutExamplePage extends StatelessWidget {
     // Ensure that you set a redirectUrl during the Fincra backend API call so that
     // Fincra redirects back with the status parameters appended.
     const mockCheckoutUrl =
-        'https://sandbox-checkout.fincra.com/pay/your-unique-session-id';
+        'https://sandbox-checkout.fincra.com/pay/fcr-p-73d48cb535';
 
     final result = await FincraCheckout.open(
       context,
       checkoutUrl: mockCheckoutUrl,
       redirectUrl: 'https://myapp.com/callback',
       appBarTitle: 'Fincra Payment',
+      appBarBackgroundColor: Colors.white,
+      closeIcon: const Icon(Icons.arrow_back_ios),
+      loadingWidget: const CircularProgressIndicator(color: Colors.redAccent),
+      showCancelConfirmationDialog: true,
+      onSuccess: (response) {
+        debugPrint('Success callback: ${response.reference}');
+      },
+      onFailed: (error) {
+        debugPrint('Failed callback: ${error.message}');
+      },
+      onCancelled: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment Cancelled by User'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      },
     );
 
     if (context.mounted) {
