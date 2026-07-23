@@ -1,3 +1,7 @@
+## 0.0.2
+
+* Added search keywords (topics) to `pubspec.yaml` for better discoverability.
+
 ## 0.0.1
 
 * Initial release.
