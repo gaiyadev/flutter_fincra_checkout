@@ -40,20 +40,6 @@ class CheckoutExamplePage extends StatelessWidget {
       closeIcon: const Icon(Icons.arrow_back_ios),
       loadingWidget: const CircularProgressIndicator(color: Colors.redAccent),
       showCancelConfirmationDialog: true,
-      onSuccess: (response) {
-        debugPrint('Success callback: ${response.reference}');
-      },
-      onFailed: (error) {
-        debugPrint('Failed callback: ${error.message}');
-      },
-      onCancelled: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Payment Cancelled by User'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      },
     );
 
     if (context.mounted) {

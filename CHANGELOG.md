@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Updated example app to reflect the latest API changes (removed deprecated callbacks).
+
 ## 0.0.4
 
 * Major DevRel review and documentation overhaul.
