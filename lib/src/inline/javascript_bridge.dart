@@ -5,13 +5,7 @@ import '../models/fincra_response.dart';
 const String fincraJavascriptChannelName = 'FincraBridge';
 
 /// Defines the types of messages coming from the Fincra JS SDK.
-enum FincraBridgeEvent {
-  ready,
-  success,
-  closed,
-  error,
-  unknown,
-}
+enum FincraBridgeEvent { ready, success, closed, error, unknown }
 
 /// A parsed message from the Fincra JS SDK.
 class FincraBridgeMessage {
@@ -30,13 +24,15 @@ class FincraBridgeMessage {
       FincraPaymentResponse? data;
       if (event == FincraBridgeEvent.success && map.containsKey('data')) {
         final dataMap = map['data'] as Map<String, dynamic>? ?? {};
-        
+
         // Ensure status is success for the FincraPaymentResponse
         dataMap['status'] ??= 'success';
-        
+
         // Convert to map of strings as FincraPaymentResponse expects it from url params
         // or we can just map it directly.
-        final params = dataMap.map((key, value) => MapEntry(key, value.toString()));
+        final params = dataMap.map(
+          (key, value) => MapEntry(key, value.toString()),
+        );
         data = FincraPaymentResponse.fromUrlParams(params);
       }
 

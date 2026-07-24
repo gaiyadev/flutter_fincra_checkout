@@ -109,7 +109,8 @@ class _InlineCheckoutState extends State<InlineCheckout> {
     final referenceLine = config.reference != null
         ? 'reference: ${jsonEncode(config.reference)},'
         : '';
-    final paymentMethodsLine = config.paymentMethods != null && config.paymentMethods!.isNotEmpty
+    final paymentMethodsLine =
+        config.paymentMethods != null && config.paymentMethods!.isNotEmpty
         ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
         : '';
     final feeBearer = jsonEncode(config.feeBearer.name);

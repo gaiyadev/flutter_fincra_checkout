@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_fincra_checkout/src/models/fincra_response.dart';
 import 'package:flutter_fincra_checkout/src/models/fincra_error.dart';
 import 'package:flutter_fincra_checkout/src/models/checkout_config.dart';
+
 void main() {
   group('Fincra Models', () {
     test('FincraPaymentResponse parses from url params correctly', () {

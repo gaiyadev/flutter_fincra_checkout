@@ -10,7 +10,7 @@ class FincraCheckout {
   /// Opens the Fincra checkout in a full-screen native WebView.
   ///
   /// This is the recommended flow using a backend-generated checkout URL.
-  /// 
+  ///
   /// Returns a [FincraCheckoutResult] which can be awaited for async flows.
   /// Optionally, you can also provide callbacks for [onSuccess], [onFailed], and [onCancelled].
   static Future<FincraCheckoutResult> openWebView(
@@ -65,7 +65,7 @@ class FincraCheckout {
   }
 
   /// Opens the Fincra checkout in a full-screen WebView.
-  /// 
+  ///
   /// Deprecated: Use [openWebView] instead for native WebView checkout flow.
   @Deprecated('Use openWebView instead')
   static Future<FincraCheckoutResult> open(

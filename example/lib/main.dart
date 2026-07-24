@@ -51,7 +51,8 @@ class CheckoutExamplePage extends StatelessWidget {
     final result = await FincraCheckout.openInline(
       context,
       config: InlineCheckoutConfig(
-        publicKey: "pk_test_", // Replace with your Fincra public key
+        publicKey:
+            "pk_test_NmE2MjM2NTcxMGVmY2RkMWRjNTAzY2ZlOjoxNDA4NTk=", // Replace with your Fincra public key
         amount: 5000,
         currency: FincraCurrency.ngn,
         customerEmail: "customer@example.com",

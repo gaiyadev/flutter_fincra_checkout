@@ -38,15 +38,7 @@ class WebViewCheckoutConfig {
 enum FeeBearer { business, customer }
 
 /// Defines the available currencies supported by Fincra.
-enum FincraCurrency {
-  ngn,
-  kes,
-  ugx,
-  ghs,
-  zar,
-  xaf,
-  xof,
-}
+enum FincraCurrency { ngn, kes, ugx, ghs, zar, xaf, xof }
 
 /// Configuration for the Inline Checkout experience.
 class InlineCheckoutConfig {
