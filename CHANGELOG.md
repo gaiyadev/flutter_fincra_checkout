@@ -2,6 +2,7 @@
 
 * **New Feature**: Added support for Fincra Inline JavaScript Checkout.
 * **New API**: Introduced `FincraCheckout.openWebView` and `FincraCheckout.openInline`.
+* **Enhancement**: Added `paymentMethods` array parameter to strictly filter allowed methods (e.g., `["bank_transfer"]`).
 * **Deprecation**: `FincraCheckout.open` is now deprecated in favor of `openWebView`.
 * Maintains 100% backward compatibility for existing users.
 

@@ -1,16 +1,37 @@
-# example
+# Flutter Fincra Checkout Example
 
-A new Flutter project.
+A complete working example demonstrating how to integrate the `flutter_fincra_checkout` package into your Flutter application.
 
-## Getting Started
+## 🚀 Getting Started
 
-This project is a starting point for a Flutter application.
+This example app showcases both the **WebView Checkout** and **Inline Checkout** flows. 
 
-A few resources to get you started if this is your first Flutter project:
+### Prerequisites
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+To test the **Inline Checkout** flow, you must replace the placeholder `publicKey` in `lib/main.dart` with your actual Fincra public key.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```dart
+// lib/main.dart
+InlineCheckoutConfig(
+  publicKey: "pk_test_YOUR_ACTUAL_KEY", // <--- REPLACE THIS
+  amount: 5000,
+  // ...
+)
+```
+
+*(Note: For testing the WebView flow, you typically need to generate a checkout session URL from your backend using your Secret Key).*
+
+### Running the Example
+
+1. Ensure you have an emulator or device connected.
+2. Run the app:
+```bash
+flutter run
+```
+
+## 💡 What it Demonstrates
+
+- How to construct an `InlineCheckoutConfig`.
+- How to trigger `FincraCheckout.openInline()` asynchronously.
+- How to handle `FincraCheckoutSuccess`, `FincraCheckoutError`, and `FincraCheckoutCancelled` results using a strongly-typed `switch` statement.
+- How to filter `paymentMethods` safely.

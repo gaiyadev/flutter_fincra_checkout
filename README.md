@@ -113,6 +113,7 @@ Future<void> _startInlinePayment(BuildContext context) async {
       customerName: "John Doe",
       customerPhoneNumber: "08012345678",
       reference: "CUSTOM-REF-123", // Optional
+      paymentMethods: ["bank_transfer", "card", "payattitude"], // Optional
     ),
   );
   
@@ -168,6 +169,7 @@ InlineCheckout(
     customerEmail: "customer@example.com",
     customerName: "John Doe",
     customerPhoneNumber: "08012345678",
+    paymentMethods: ["card"],
   ),
 )
 ```
@@ -198,6 +200,7 @@ The configurations for both modes accept various parameters to help you tailor t
 | `customerPhoneNumber` | `String` | **(Required)** The customer's phone number. |
 | `feeBearer` | `FeeBearer` | **(Required)** Determines who pays the fees (`FeeBearer.business` or `FeeBearer.customer`). |
 | `reference` | `String?` | Optional custom transaction reference. |
+| `paymentMethods` | `List<String>?` | Optional list of allowed payment methods (e.g., `["card", "bank_transfer"]`). |
 
 *Note: Both `FincraCheckout.openWebView` and `FincraCheckout.openInline` also accept optional `onSuccess`, `onFailed`, and `onCancelled` callbacks if you prefer that over `async/await`.*
 
