@@ -140,6 +140,40 @@ FincraCheckout.open(
 );
 ```
 
+### 3. Native UI Checkout (Alternative to WebView)
+
+If you have Server-to-Server direct charge APIs enabled on your Fincra dashboard, you can build a fully native checkout experience without WebViews.
+
+> **Note on PCI Compliance:** Your backend MUST be PCI-DSS compliant to handle raw card data via Fincra's Direct Charge API. Do not embed your secret key in your Flutter app!
+
+The `FincraNativeCheckout` widget handles input validation (Luhn algorithm, expiry format, etc.) and provides a beautiful interface. It yields a `CardDetails` object which you can then pass to your backend securely.
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_fincra_checkout/flutter_fincra_checkout.dart';
+
+void _startNativePayment(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: FincraNativeCheckout(
+        amountText: 'Pay NGN 5,000',
+        headerWidget: Text('Secure Checkout', style: TextStyle(fontSize: 20)),
+        onPay: (CardDetails details) async {
+          // 1. Send details to YOUR secure backend
+          // 2. Your backend calls Fincra's Direct Charge API
+          // 3. Wait for response...
+          await Future.delayed(const Duration(seconds: 2));
+          Navigator.pop(context);
+        },
+      ),
+    ),
+  );
+}
+```
+
 ### Advanced: Custom Layout
 
 If you want full control over the layout (e.g., embedding the checkout in a Bottom Sheet or a specific container instead of a full screen), you can use the raw `CheckoutWebView` widget directly.
