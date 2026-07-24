@@ -71,6 +71,9 @@ class InlineCheckoutConfig {
   /// The unique transaction reference. If not provided, Fincra generates one.
   final String? reference;
 
+  /// Optional list of payment methods to restrict the checkout to (e.g., ['card', 'bank_transfer']).
+  final List<String>? paymentMethods;
+
   /// Who bears the Fincra processing fees.
   final FeeBearer feeBearer;
 
@@ -82,6 +85,7 @@ class InlineCheckoutConfig {
     required this.customerName,
     this.customerPhoneNumber,
     this.reference,
+    this.paymentMethods,
     required this.feeBearer,
   });
 }

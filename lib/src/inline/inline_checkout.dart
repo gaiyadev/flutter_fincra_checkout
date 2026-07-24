@@ -109,6 +109,9 @@ class _InlineCheckoutState extends State<InlineCheckout> {
     final referenceLine = config.reference != null
         ? 'reference: ${jsonEncode(config.reference)},'
         : '';
+    final paymentMethodsLine = config.paymentMethods != null && config.paymentMethods!.isNotEmpty
+        ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
+        : '';
     final feeBearer = jsonEncode(config.feeBearer.name);
 
     return '''
@@ -150,6 +153,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         amount: $amount,
         currency: $currency,
         $referenceLine
+        $paymentMethodsLine
         feeBearer: $feeBearer,
         customer: {
           name: $name,
@@ -203,14 +207,18 @@ class _InlineCheckoutState extends State<InlineCheckout> {
               Positioned(
                 top: 10,
                 right: 10,
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.black),
-                  onPressed: () {
-                    if (!_hasCompleted) {
-                      _hasCompleted = true;
-                      Navigator.of(context).pop(FincraCheckoutCancelled());
-                    }
-                  },
+                child: CircleAvatar(
+                  backgroundColor: Colors.white70,
+                  radius: 20,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.black),
+                    onPressed: () {
+                      if (!_hasCompleted) {
+                        _hasCompleted = true;
+                        Navigator.of(context).pop(FincraCheckoutCancelled());
+                      }
+                    },
+                  ),
                 ),
               ),
           ],

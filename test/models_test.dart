@@ -65,6 +65,7 @@ void main() {
         customerName: 'Test Name',
         customerPhoneNumber: '0800000000',
         reference: 'REF123',
+        paymentMethods: ['card'],
         feeBearer: FeeBearer.business,
       );
 
@@ -73,6 +74,7 @@ void main() {
       expect(config.currency, FincraCurrency.ngn);
       expect(config.customerName, 'Test Name');
       expect(config.reference, 'REF123');
+      expect(config.paymentMethods, ['card']);
       expect(config.feeBearer, FeeBearer.business);
     });
   });
