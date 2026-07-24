@@ -21,6 +21,22 @@ void main() {
       expect(response.rawResponse, params);
     });
 
+    test('FincraPaymentResponse parses merchantReference fallback correctly', () {
+      final params = {
+        'reference': 'fcr-p-internal123',
+        'merchantReference': 'ORDER-555',
+        'status': 'success',
+      };
+
+      final response = FincraPaymentResponse.fromUrlParams(params);
+
+      // It should prioritize merchantReference for reference, and fallback to reference for transactionId
+      expect(response.reference, 'ORDER-555');
+      expect(response.transactionId, 'fcr-p-internal123');
+      expect(response.status, 'success');
+      expect(response.rawResponse, params);
+    });
+
     test('FincraPaymentError instantiates correctly', () {
       final error = FincraPaymentError(code: '400', message: 'Bad request');
 
@@ -44,7 +60,7 @@ void main() {
       const config = InlineCheckoutConfig(
         publicKey: 'pk_123',
         amount: 100.50,
-        currency: 'NGN',
+        currency: FincraCurrency.ngn,
         customerEmail: 'test@test.com',
         customerName: 'Test Name',
         customerPhoneNumber: '0800000000',
@@ -54,7 +70,7 @@ void main() {
 
       expect(config.publicKey, 'pk_123');
       expect(config.amount, 100.50);
-      expect(config.currency, 'NGN');
+      expect(config.currency, FincraCurrency.ngn);
       expect(config.customerName, 'Test Name');
       expect(config.reference, 'REF123');
       expect(config.feeBearer, FeeBearer.business);

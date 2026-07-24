@@ -102,7 +102,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
     // Safely encode inputs as JSON strings to avoid injection issues
     final key = jsonEncode(config.publicKey);
     final amount = config.amount;
-    final currency = jsonEncode(config.currency);
+    final currency = jsonEncode(config.currency.name.toUpperCase());
     final name = jsonEncode(config.customerName);
     final email = jsonEncode(config.customerEmail);
     final phone = jsonEncode(config.customerPhoneNumber);

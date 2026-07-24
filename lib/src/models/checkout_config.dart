@@ -37,16 +37,27 @@ class WebViewCheckoutConfig {
 /// The bearer of the fees.
 enum FeeBearer { business, customer }
 
-/// Configuration for the Inline JavaScript Checkout.
+/// Defines the available currencies supported by Fincra.
+enum FincraCurrency {
+  ngn,
+  kes,
+  ugx,
+  ghs,
+  zar,
+  xaf,
+  xof,
+}
+
+/// Configuration for the Inline Checkout experience.
 class InlineCheckoutConfig {
   /// Your Fincra public key.
   final String publicKey;
 
-  /// The amount to be paid.
-  final num amount;
+  /// The amount to charge the customer.
+  final double amount;
 
-  /// The currency for the transaction (e.g., 'NGN').
-  final String currency;
+  /// The currency to charge the customer in.
+  final FincraCurrency currency;
 
   /// The customer's email address.
   final String customerEmail;
@@ -55,12 +66,12 @@ class InlineCheckoutConfig {
   final String customerName;
 
   /// The customer's phone number.
-  final String customerPhoneNumber;
+  final String? customerPhoneNumber;
 
-  /// An optional custom reference for the transaction.
+  /// The unique transaction reference. If not provided, Fincra generates one.
   final String? reference;
 
-  /// The bearer of the fees.
+  /// Who bears the Fincra processing fees.
   final FeeBearer feeBearer;
 
   const InlineCheckoutConfig({
@@ -69,8 +80,8 @@ class InlineCheckoutConfig {
     required this.currency,
     required this.customerEmail,
     required this.customerName,
-    required this.customerPhoneNumber,
-    required this.feeBearer,
+    this.customerPhoneNumber,
     this.reference,
+    required this.feeBearer,
   });
 }

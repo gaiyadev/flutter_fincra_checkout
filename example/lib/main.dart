@@ -27,19 +27,18 @@ class CheckoutExamplePage extends StatelessWidget {
   Future<void> _startWebViewPayment(BuildContext context) async {
     // In a real app, this URL is obtained from your backend by calling the Fincra API.
     // Ensure that you set a redirectUrl during the Fincra backend API call so that
-    // Fincra redirects back with the status parameters appended.
-    const mockCheckoutUrl =
-        'https://sandbox-checkout.fincra.com/pay/fcr-p-73d48cb535';
+    // using your Fincra Secret Key. For testing, paste a generated URL here.
+    const mockCheckoutUrl = 'https://sandbox-checkout.fincra.com/pay/fcr-p-39db5ff883';
 
     final result = await FincraCheckout.openWebView(
       context,
-      config: WebViewCheckoutConfig(
+      config: const WebViewCheckoutConfig(
         checkoutUrl: mockCheckoutUrl,
-        redirectUrl: 'https://myapp.com/callback',
-        appBarTitle: 'WebView Payment',
+        redirectUrl: 'https://google.com',
+        appBarTitle: 'Pay with Fincra',
         appBarBackgroundColor: Colors.white,
-        closeIcon: const Icon(Icons.arrow_back_ios),
-        loadingWidget: const CircularProgressIndicator(color: Colors.redAccent),
+        closeIcon: Icon(Icons.arrow_back_ios),
+        loadingWidget: CircularProgressIndicator(color: Colors.redAccent),
         showCancelConfirmationDialog: true,
       ),
     );
@@ -54,10 +53,10 @@ class CheckoutExamplePage extends StatelessWidget {
         publicKey:
             "pk_test_NmE2MjM2NTcxMGVmY2RkMWRjNTAzY2ZlOjoxNDA4NTk=", // Replace with your Fincra public key
         amount: 5000,
-        currency: "NGN",
+        currency: FincraCurrency.ngn,
         customerEmail: "customer@example.com",
         customerName: "John Doe",
-        customerPhoneNumber: "08012345678",
+        customerPhoneNumber: "07058149795",
         reference: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
         feeBearer: FeeBearer.customer,
       ),
