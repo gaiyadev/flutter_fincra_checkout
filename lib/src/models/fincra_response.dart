@@ -14,9 +14,18 @@ class FincraPaymentResponse {
   });
 
   factory FincraPaymentResponse.fromUrlParams(Map<String, String> params) {
+    // Fincra sometimes returns the merchant reference under 'customerReference' or 'merchantReference'
+    final customRef = params['customerReference'] ?? params['merchantReference'];
+    final internalRef = params['transactionReference'] ?? params['transactionId'];
+
+    // If Fincra returned a distinct customRef, use it as our reference.
+    // In that case, 'reference' is likely their internal ID.
+    final finalRef = customRef ?? params['reference'] ?? '';
+    final finalTxId = internalRef ?? (customRef != null ? (params['reference'] ?? '') : '');
+
     return FincraPaymentResponse(
-      reference: params['reference'] ?? '',
-      transactionId: params['transactionId'] ?? '',
+      reference: finalRef,
+      transactionId: finalTxId,
       status: params['status'] ?? 'unknown',
       message: params['message'],
       rawResponse: params,

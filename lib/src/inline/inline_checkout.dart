@@ -25,16 +25,19 @@ class _InlineCheckoutState extends State<InlineCheckout> {
   @override
   void initState() {
     super.initState();
-    
+
     _timeoutTimer = Timer(const Duration(seconds: 15), () {
       if (_isLoading && mounted) {
         _hasCompleted = true;
-        Navigator.of(context).pop(FincraCheckoutError(
-          FincraPaymentError(
-            code: 'timeout',
-            message: 'Fincra Checkout failed to load. Please check your internet connection.',
+        Navigator.of(context).pop(
+          FincraCheckoutError(
+            FincraPaymentError(
+              code: 'timeout',
+              message:
+                  'Fincra Checkout failed to load. Please check your internet connection.',
+            ),
           ),
-        ));
+        );
       }
     });
 
@@ -81,10 +84,13 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         break;
       case FincraBridgeEvent.error:
         _hasCompleted = true;
-        final message = parsedMessage.data?.message ?? 'An unknown error occurred';
-        Navigator.of(context).pop(FincraCheckoutError(
-          FincraPaymentError(code: 'error', message: message),
-        ));
+        final message =
+            parsedMessage.data?.message ?? 'An unknown error occurred';
+        Navigator.of(context).pop(
+          FincraCheckoutError(
+            FincraPaymentError(code: 'error', message: message),
+          ),
+        );
         break;
       case FincraBridgeEvent.unknown:
         // Ignore unknown events
@@ -100,8 +106,10 @@ class _InlineCheckoutState extends State<InlineCheckout> {
     final name = jsonEncode(config.customerName);
     final email = jsonEncode(config.customerEmail);
     final phone = jsonEncode(config.customerPhoneNumber);
-    final reference = config.reference != null ? jsonEncode(config.reference) : 'null';
-    final feeBearer = config.feeBearer != null ? jsonEncode(config.feeBearer!.name) : 'null';
+    final referenceLine = config.reference != null
+        ? 'reference: ${jsonEncode(config.reference)},'
+        : '';
+    final feeBearer = jsonEncode(config.feeBearer.name);
 
     return '''
 <!DOCTYPE html>
@@ -141,6 +149,8 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         key: $key,
         amount: $amount,
         currency: $currency,
+        $referenceLine
+        feeBearer: $feeBearer,
         customer: {
           name: $name,
           email: $email,
@@ -153,14 +163,6 @@ class _InlineCheckoutState extends State<InlineCheckout> {
           postMessageToFlutter('success', data);
         }
       };
-
-      if ($reference !== null) {
-        options.reference = $reference;
-      }
-
-      if ($feeBearer !== null) {
-        options.feeBearer = $feeBearer;
-      }
 
       Fincra.initialize(options);
     }
@@ -191,7 +193,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 10,
-                      )
+                      ),
                     ],
                   ),
                   child: const CircularProgressIndicator(),

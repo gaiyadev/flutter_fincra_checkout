@@ -50,14 +50,16 @@ class CheckoutExamplePage extends StatelessWidget {
   Future<void> _startInlinePayment(BuildContext context) async {
     final result = await FincraCheckout.openInline(
       context,
-      config: const InlineCheckoutConfig(
-        publicKey: "pk_test_...", // Replace with your Fincra public key
+      config: InlineCheckoutConfig(
+        publicKey:
+            "pk_test_NmE2MjM2NTcxMGVmY2RkMWRjNTAzY2ZlOjoxNDA4NTk=", // Replace with your Fincra public key
         amount: 5000,
         currency: "NGN",
         customerEmail: "customer@example.com",
         customerName: "John Doe",
         customerPhoneNumber: "08012345678",
-        reference: "ORDER-123",
+        reference: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
+        feeBearer: FeeBearer.customer,
       ),
     );
 
@@ -106,17 +108,29 @@ class CheckoutExamplePage extends StatelessWidget {
             ElevatedButton(
               onPressed: () => _startWebViewPayment(context),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
-              child: const Text('Pay with WebView Checkout', style: TextStyle(fontSize: 16)),
+              child: const Text(
+                'Pay with WebView Checkout',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => _startInlinePayment(context),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
               ),
-              child: const Text('Pay with Inline Checkout', style: TextStyle(fontSize: 16)),
+              child: const Text(
+                'Pay with Inline Checkout',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),

@@ -145,20 +145,38 @@ void _handleResult(FincraCheckoutResult result) {
 
 ### Advanced: Custom Layout
 
-If you want full control over the layout (e.g., embedding the checkout in a Bottom Sheet or a specific container instead of a full screen), you can use the raw `CheckoutWebView` widget directly.
+If you want full control over the layout (e.g., embedding the checkout in a Bottom Sheet or a specific container instead of a full screen), you can use the raw widgets directly.
 
+#### For WebView:
 ```dart
 CheckoutWebView(
-  checkoutUrl: url,
-  redirectUrl: "https://your-backend.com/webhook",
-  appBarTitle: "Secure Payment",
+  config: const WebViewCheckoutConfig(
+    checkoutUrl: "https://checkout.fincra.com/...",
+    redirectUrl: "https://your-backend.com/webhook",
+    appBarTitle: "Secure Payment",
+  ),
 )
 ```
 
-### Customization Parameters
+#### For Inline:
+```dart
+InlineCheckout(
+  config: const InlineCheckoutConfig(
+    publicKey: "pk_...",
+    amount: 1500,
+    currency: "NGN",
+    customerEmail: "customer@example.com",
+    customerName: "John Doe",
+    customerPhoneNumber: "08012345678",
+  ),
+)
+```
 
-The `FincraCheckout.open` method accepts several parameters to help you tailor the checkout experience to your app's brand and logic:
+### Configuration Parameters
 
+The configurations for both modes accept various parameters to help you tailor the checkout experience.
+
+#### `WebViewCheckoutConfig`
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `checkoutUrl` | `String` | **(Required)** The generated payment URL from your backend. |
@@ -168,9 +186,20 @@ The `FincraCheckout.open` method accepts several parameters to help you tailor t
 | `closeIcon` | `Widget?` | Replaces the default exit button (e.g., `Icon(Icons.close)`). |
 | `loadingWidget` | `Widget?` | A custom loading indicator displayed while the payment page is initially loading. |
 | `showCancelConfirmationDialog` | `bool` | Set to `true` to show a confirmation dialog when the user tries to exit the checkout prematurely. Defaults to `false`. |
-| `onSuccess` | `ValueChanged<FincraPaymentResponse>?` | Callback triggered when the payment is successful. |
-| `onFailed` | `ValueChanged<FincraPaymentError>?` | Callback triggered when the payment fails. |
-| `onCancelled` | `VoidCallback?` | Callback triggered when the user explicitly cancels/closes the checkout. |
+
+#### `InlineCheckoutConfig`
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `publicKey` | `String` | **(Required)** Your Fincra public key. |
+| `amount` | `num` | **(Required)** The transaction amount. |
+| `currency` | `String` | **(Required)** The currency code (e.g., 'NGN', 'USD'). |
+| `customerEmail` | `String` | **(Required)** The customer's email. |
+| `customerName` | `String` | **(Required)** The customer's full name. |
+| `customerPhoneNumber` | `String` | **(Required)** The customer's phone number. |
+| `feeBearer` | `FeeBearer` | **(Required)** Determines who pays the fees (`FeeBearer.business` or `FeeBearer.customer`). |
+| `reference` | `String?` | Optional custom transaction reference. |
+
+*Note: Both `FincraCheckout.openWebView` and `FincraCheckout.openInline` also accept optional `onSuccess`, `onFailed`, and `onCancelled` callbacks if you prefer that over `async/await`.*
 
 ---
 

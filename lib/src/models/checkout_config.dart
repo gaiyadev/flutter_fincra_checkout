@@ -60,8 +60,8 @@ class InlineCheckoutConfig {
   /// An optional custom reference for the transaction.
   final String? reference;
 
-  /// The bearer of the fees ('business' or 'customer').
-  final FeeBearer? feeBearer;
+  /// The bearer of the fees.
+  final FeeBearer feeBearer;
 
   const InlineCheckoutConfig({
     required this.publicKey,
@@ -70,7 +70,7 @@ class InlineCheckoutConfig {
     required this.customerEmail,
     required this.customerName,
     required this.customerPhoneNumber,
+    required this.feeBearer,
     this.reference,
-    this.feeBearer,
   });
 }
