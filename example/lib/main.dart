@@ -74,17 +74,94 @@ class CheckoutExamplePage extends StatelessWidget {
     }
   }
 
+  void _startNativePayment(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: FincraNativeCheckout(
+            amountText: 'Pay NGN 5,000',
+            headerWidget: const Column(
+              children: [
+                Icon(Icons.payment, size: 48, color: Colors.blue),
+                SizedBox(height: 8),
+                Text(
+                  'Secure Card Payment',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            onPay: (details) async {
+              // Simulate backend processing delay
+              await Future.delayed(const Duration(seconds: 2));
+
+              if (context.mounted) {
+                Navigator.pop(context); // Close bottom sheet
+
+                final last4 = details.cardNumber.length >= 4
+                    ? details.cardNumber.substring(
+                        details.cardNumber.length - 4,
+                      )
+                    : details.cardNumber;
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Successfully processed ${details.brand.name} ending in $last4',
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Fincra SDK Example')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => _startPayment(context),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          ),
-          child: const Text('Pay with Fincra', style: TextStyle(fontSize: 18)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => _startPayment(context),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+              ),
+              child: const Text(
+                'Pay with WebView',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => _startNativePayment(context),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 16,
+                ),
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'Native UI Checkout',
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          ],
         ),
       ),
     );
