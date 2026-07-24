@@ -108,7 +108,7 @@ Future<void> _startInlinePayment(BuildContext context) async {
     config: const InlineCheckoutConfig(
       publicKey: "pk_...", // ONLY use your Fincra PUBLIC key
       amount: 1500,
-      currency: "NGN",
+      currency: FincraCurrency.ngn,
       customerEmail: "customer@example.com",
       customerName: "John Doe",
       customerPhoneNumber: "08012345678",
@@ -164,7 +164,7 @@ InlineCheckout(
   config: const InlineCheckoutConfig(
     publicKey: "pk_...",
     amount: 1500,
-    currency: "NGN",
+    currency: FincraCurrency.ngn,
     customerEmail: "customer@example.com",
     customerName: "John Doe",
     customerPhoneNumber: "08012345678",
@@ -192,7 +192,7 @@ The configurations for both modes accept various parameters to help you tailor t
 | :--- | :--- | :--- |
 | `publicKey` | `String` | **(Required)** Your Fincra public key. |
 | `amount` | `num` | **(Required)** The transaction amount. |
-| `currency` | `String` | **(Required)** The currency code (e.g., 'NGN', 'USD'). |
+| `currency` | `FincraCurrency` | **(Required)** The currency code enum (e.g., `FincraCurrency.ngn`). |
 | `customerEmail` | `String` | **(Required)** The customer's email. |
 | `customerName` | `String` | **(Required)** The customer's full name. |
 | `customerPhoneNumber` | `String` | **(Required)** The customer's phone number. |
