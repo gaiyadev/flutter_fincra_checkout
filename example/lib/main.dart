@@ -24,53 +24,74 @@ class MyApp extends StatelessWidget {
 class CheckoutExamplePage extends StatelessWidget {
   const CheckoutExamplePage({super.key});
 
-  Future<void> _startPayment(BuildContext context) async {
+  Future<void> _startWebViewPayment(BuildContext context) async {
     // In a real app, this URL is obtained from your backend by calling the Fincra API.
     // Ensure that you set a redirectUrl during the Fincra backend API call so that
     // Fincra redirects back with the status parameters appended.
     const mockCheckoutUrl =
         'https://sandbox-checkout.fincra.com/pay/fcr-p-73d48cb535';
 
-    final result = await FincraCheckout.open(
+    final result = await FincraCheckout.openWebView(
       context,
-      checkoutUrl: mockCheckoutUrl,
-      redirectUrl: 'https://myapp.com/callback',
-      appBarTitle: 'Fincra Payment',
-      appBarBackgroundColor: Colors.white,
-      closeIcon: const Icon(Icons.arrow_back_ios),
-      loadingWidget: const CircularProgressIndicator(color: Colors.redAccent),
-      showCancelConfirmationDialog: true,
+      config: WebViewCheckoutConfig(
+        checkoutUrl: mockCheckoutUrl,
+        redirectUrl: 'https://myapp.com/callback',
+        appBarTitle: 'WebView Payment',
+        appBarBackgroundColor: Colors.white,
+        closeIcon: const Icon(Icons.arrow_back_ios),
+        loadingWidget: const CircularProgressIndicator(color: Colors.redAccent),
+        showCancelConfirmationDialog: true,
+      ),
     );
 
-    if (context.mounted) {
-      switch (result) {
-        case FincraCheckoutSuccess():
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Payment Successful! Ref: ${result.response.reference}',
-              ),
-              backgroundColor: Colors.green,
+    if (context.mounted) _handleResult(context, result);
+  }
+
+  Future<void> _startInlinePayment(BuildContext context) async {
+    final result = await FincraCheckout.openInline(
+      context,
+      config: const InlineCheckoutConfig(
+        publicKey: "pk_test_...", // Replace with your Fincra public key
+        amount: 5000,
+        currency: "NGN",
+        customerEmail: "customer@example.com",
+        customerName: "John Doe",
+        customerPhoneNumber: "08012345678",
+        reference: "ORDER-123",
+      ),
+    );
+
+    if (context.mounted) _handleResult(context, result);
+  }
+
+  void _handleResult(BuildContext context, FincraCheckoutResult result) {
+    switch (result) {
+      case FincraCheckoutSuccess():
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Payment Successful! Ref: ${result.response.reference}',
             ),
-          );
-          break;
-        case FincraCheckoutError():
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Payment Failed: ${result.error.message}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          break;
-        case FincraCheckoutCancelled():
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Payment Cancelled by User'),
-              backgroundColor: Colors.orange,
-            ),
-          );
-          break;
-      }
+            backgroundColor: Colors.green,
+          ),
+        );
+        break;
+      case FincraCheckoutError():
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment Failed: ${result.error.message}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        break;
+      case FincraCheckoutCancelled():
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Payment Cancelled by User'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        break;
     }
   }
 
@@ -79,12 +100,25 @@ class CheckoutExamplePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Fincra SDK Example')),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => _startPayment(context),
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-          ),
-          child: const Text('Pay with Fincra', style: TextStyle(fontSize: 18)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => _startWebViewPayment(context),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+              child: const Text('Pay with WebView Checkout', style: TextStyle(fontSize: 16)),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _startInlinePayment(context),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              ),
+              child: const Text('Pay with Inline Checkout', style: TextStyle(fontSize: 16)),
+            ),
+          ],
         ),
       ),
     );

@@ -1,3 +1,10 @@
+## 0.1.0
+
+* **New Feature**: Added support for Fincra Inline JavaScript Checkout.
+* **New API**: Introduced `FincraCheckout.openWebView` and `FincraCheckout.openInline`.
+* **Deprecation**: `FincraCheckout.open` is now deprecated in favor of `openWebView`.
+* Maintains 100% backward compatibility for existing users.
+
 ## 0.0.5
 
 * Updated example app to reflect the latest API changes (removed deprecated callbacks).
