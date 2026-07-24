@@ -151,11 +151,9 @@ If you want full control over the layout (e.g., embedding the checkout in a Bott
 #### For WebView:
 ```dart
 CheckoutWebView(
-  config: const WebViewCheckoutConfig(
-    checkoutUrl: "https://checkout.fincra.com/...",
-    redirectUrl: "https://your-backend.com/webhook",
-    appBarTitle: "Secure Payment",
-  ),
+  checkoutUrl: "https://checkout.fincra.com/...",
+  redirectUrl: "https://your-backend.com/webhook",
+  appBarTitle: "Secure Payment",
 )
 ```
 
@@ -170,6 +168,7 @@ InlineCheckout(
     customerName: "John Doe",
     customerPhoneNumber: "08012345678",
     paymentMethods: ["card"],
+    feeBearer: FeeBearer.customer,
   ),
 )
 ```
