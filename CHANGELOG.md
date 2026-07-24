@@ -1,3 +1,14 @@
+## 0.1.0
+
+* **Major Feature**: Added `FincraNativeCheckout` widget to allow processing card details natively inside the app (without webviews).
+* Added `CardDetails` model and `CardUtils` for Luhn validation, CVV, and expiry date formatting.
+* Added `FincraCheckoutStrings` for seamless internationalization (i18n) of the native checkout UI.
+* Updated example app to demonstrate Native Checkout alongside WebView Checkout.
+
+## 0.0.5
+
+* Updated example app to reflect the latest API changes (removed deprecated callbacks).
+
 ## 0.0.4
 
 * Major DevRel review and documentation overhaul.
