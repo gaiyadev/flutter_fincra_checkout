@@ -28,8 +28,7 @@ class CheckoutExamplePage extends StatelessWidget {
     // In a real app, this URL is obtained from your backend by calling the Fincra API.
     // Ensure that you set a redirectUrl during the Fincra backend API call so that
     // using your Fincra Secret Key. For testing, paste a generated URL here.
-    const mockCheckoutUrl =
-        'https://sandbox-checkout.fincra.com/pay/fcr-p-03b459293a';
+    const mockCheckoutUrl = 'https://sandbox-checkout.fincra.com/pay/fcr-p-';
 
     final result = await FincraCheckout.openWebView(
       context,
@@ -51,8 +50,7 @@ class CheckoutExamplePage extends StatelessWidget {
     final result = await FincraCheckout.openInline(
       context,
       config: InlineCheckoutConfig(
-        publicKey:
-            "pk_test_NmE2MjM2NTcxMGVmY2RkMWRjNTAzY2ZlOjoxNDA4NTk=", // Replace with your Fincra public key
+        publicKey: "pk_test_", // Replace with your Fincra public key
         amount: 5000,
         currency: FincraCurrency.ngn,
         customerEmail: "customer@example.com",
