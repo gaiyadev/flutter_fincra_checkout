@@ -10,10 +10,12 @@ void main() {
           builder: (context) {
             return ElevatedButton(
               onPressed: () {
-                FincraCheckout.open(
+                FincraCheckout.openWebView(
                   context,
-                  checkoutUrl: 'https://checkout.sandbox.fincra.com',
-                  appBarTitle: 'Test Checkout',
+                  config: const WebViewCheckoutConfig(
+                    checkoutUrl: 'https://checkout.sandbox.fincra.com',
+                    appBarTitle: 'Test Checkout',
+                  ),
                 );
               },
               child: const Text('Open Checkout'),
