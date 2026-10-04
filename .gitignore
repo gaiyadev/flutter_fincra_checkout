@@ -29,3 +29,8 @@ migrate_working_dir/
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+
+# Local secrets / dart-define files (never commit keys)
+.env
+.env.*
+*.env.json

@@ -25,16 +25,24 @@ class CheckoutExamplePage extends StatelessWidget {
   const CheckoutExamplePage({super.key});
 
   Future<void> _startWebViewPayment(BuildContext context) async {
-    // In a real app, this URL is obtained from your backend by calling the Fincra API.
-    // Ensure that you set a redirectUrl during the Fincra backend API call so that
-    // using your Fincra Secret Key. For testing, paste a generated URL here.
-    const mockCheckoutUrl = 'https://sandbox-checkout.fincra.com/pay/fcr-p-';
+    // In a real app, your backend creates this URL with your Fincra Secret Key
+    // (POST /checkout/payments) and returns it to the app. Use the same
+    // redirectUrl here that your backend sent to Fincra. For local testing, pass
+    // them with --dart-define (see example/README.md).
+    const checkoutUrl = String.fromEnvironment(
+      'FINCRA_CHECKOUT_URL',
+      defaultValue: 'https://sandbox-checkout.fincra.com/pay/fcr-p-',
+    );
+    const redirectUrl = String.fromEnvironment(
+      'FINCRA_REDIRECT_URL',
+      defaultValue: 'https://example.com/fincra-callback',
+    );
 
     final result = await FincraCheckout.openWebView(
       context,
       config: const WebViewCheckoutConfig(
-        checkoutUrl: mockCheckoutUrl,
-        redirectUrl: 'https://google.com',
+        checkoutUrl: checkoutUrl,
+        redirectUrl: redirectUrl,
         appBarTitle: 'Pay with Fincra',
         appBarBackgroundColor: Colors.white,
         closeIcon: Icon(Icons.arrow_back_ios),
@@ -50,7 +58,11 @@ class CheckoutExamplePage extends StatelessWidget {
     final result = await FincraCheckout.openInline(
       context,
       config: InlineCheckoutConfig(
-        publicKey: "pk_test_", // Replace with your Fincra public key
+        // Your Fincra PUBLIC key only. Never ship your secret key in an app.
+        publicKey: const String.fromEnvironment(
+          'FINCRA_PUBLIC_KEY',
+          defaultValue: 'pk_test_',
+        ),
         amount: 5000,
         currency: FincraCurrency.ngn,
         customerEmail: "customer@example.com",

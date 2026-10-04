@@ -8,25 +8,43 @@ This example app showcases both the **WebView Checkout** and **Inline Checkout**
 
 ### Prerequisites
 
-To test the **Inline Checkout** flow, you must replace the placeholder `publicKey` in `lib/main.dart` with your actual Fincra public key.
+The app reads your keys from `--dart-define` values, so nothing secret lives in source.
+Create `example/.env.json` (it is gitignored):
 
-```dart
-// lib/main.dart
-InlineCheckoutConfig(
-  publicKey: "pk_test_YOUR_ACTUAL_KEY", // <--- REPLACE THIS
-  amount: 5000,
-  // ...
-)
+```json
+{
+  "FINCRA_PUBLIC_KEY": "pk_test_...",
+  "FINCRA_CHECKOUT_URL": "https://sandbox-checkout.fincra.com/pay/fcr-p-...",
+  "FINCRA_REDIRECT_URL": "https://example.com/fincra-callback"
+}
 ```
 
-*(Note: For testing the WebView flow, you typically need to generate a checkout session URL from your backend using your Secret Key).*
+- `FINCRA_PUBLIC_KEY`: your Fincra **public** key (used by Inline Checkout). Never put your secret key in an app.
+- `FINCRA_CHECKOUT_URL`: a hosted link for WebView Checkout. Create it server-side with your **secret** key, e.g.:
+
+```bash
+curl -X POST https://sandboxapi.fincra.com/checkout/payments \
+  -H "api-key: $FINCRA_SECRET_KEY" -H "x-pub-key: $FINCRA_PUBLIC_KEY" \
+  -H "content-type: application/json" \
+  -d '{"amount":500,"currency":"NGN","customer":{"name":"Test","email":"test@example.com"},"redirectUrl":"https://example.com/fincra-callback"}'
+```
+
+- `FINCRA_REDIRECT_URL`: the same `redirectUrl` you sent to Fincra.
 
 ### Running the Example
 
 1. Ensure you have an emulator or device connected.
 2. Run the app:
 ```bash
-flutter run
+flutter run --dart-define-from-file=.env.json
+```
+
+### Sandbox integration tests
+
+`integration_test/` drives both flows against the real Fincra sandbox (needs network and the `.env.json` above, with a fresh `FINCRA_CHECKOUT_URL`):
+
+```bash
+flutter test integration_test --dart-define-from-file=.env.json
 ```
 
 ## 💡 What it Demonstrates
