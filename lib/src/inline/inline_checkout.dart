@@ -48,7 +48,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         fincraJavascriptChannelName,
         onMessageReceived: _handleJavascriptMessage,
       )
-      ..loadHtmlString(_generateHtml(widget.config));
+      ..loadHtmlString(buildInlineCheckoutHtml(widget.config));
   }
 
   @override
@@ -92,87 +92,6 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         // Ignore unknown events
         break;
     }
-  }
-
-  String _generateHtml(InlineCheckoutConfig config) {
-    // Safely encode inputs as JSON strings to avoid injection issues
-    final key = jsonEncode(config.publicKey);
-    final amount = config.amount;
-    final currency = jsonEncode(config.currency.name.toUpperCase());
-    final name = jsonEncode(config.customerName);
-    final email = jsonEncode(config.customerEmail);
-    final phone = jsonEncode(config.customerPhoneNumber);
-    final referenceLine = config.reference != null
-        ? 'reference: ${jsonEncode(config.reference)},'
-        : '';
-    final paymentMethodsLine =
-        config.paymentMethods != null && config.paymentMethods!.isNotEmpty
-        ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
-        : '';
-    final feeBearer = jsonEncode(config.feeBearer.name);
-
-    return '''
-<!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <script src="https://unpkg.com/@fincra-engineering/checkout@2.2.0/dist/inline.min.js"></script>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: transparent;
-    }
-  </style>
-</head>
-<body>
-  <script>
-    function postMessageToFlutter(event, data) {
-      if (window.$fincraJavascriptChannelName) {
-        window.$fincraJavascriptChannelName.postMessage(JSON.stringify({ event: event, data: data }));
-      }
-    }
-
-    function initFincra(attempts = 0) {
-      if (typeof Fincra === 'undefined') {
-        if (attempts > 150) {
-          postMessageToFlutter('error', { message: 'Fincra SDK failed to load.' });
-          return;
-        }
-        setTimeout(function() { initFincra(attempts + 1); }, 100);
-        return;
-      }
-      
-      postMessageToFlutter('ready', null);
-      
-      var options = {
-        key: $key,
-        amount: $amount,
-        currency: $currency,
-        $referenceLine
-        $paymentMethodsLine
-        feeBearer: $feeBearer,
-        customer: {
-          name: $name,
-          email: $email,
-          phoneNumber: $phone,
-        },
-        onClose: function () {
-          postMessageToFlutter('closed', null);
-        },
-        onSuccess: function (data) {
-          postMessageToFlutter('success', data);
-        }
-      };
-
-      Fincra.initialize(options);
-    }
-
-    window.onload = initFincra;
-  </script>
-</body>
-</html>
-''';
   }
 
   @override
@@ -230,4 +149,91 @@ class _InlineCheckoutState extends State<InlineCheckout> {
       ),
     );
   }
+}
+
+/// Builds the HTML page that loads the Fincra inline SDK for [config].
+@visibleForTesting
+String buildInlineCheckoutHtml(InlineCheckoutConfig config) {
+  // Safely encode inputs as JSON strings to avoid injection issues
+  final key = jsonEncode(config.publicKey);
+  final amount = config.amount;
+  final currency = jsonEncode(config.currency.name.toUpperCase());
+  final name = jsonEncode(config.customerName);
+  final email = jsonEncode(config.customerEmail);
+  // The phone number is optional on Fincra, so omit it rather than send null or "".
+  final phone = config.customerPhoneNumber?.trim();
+  final phoneLine = phone != null && phone.isNotEmpty
+      ? 'phoneNumber: ${jsonEncode(phone)},'
+      : '';
+  final referenceLine = config.reference != null
+      ? 'reference: ${jsonEncode(config.reference)},'
+      : '';
+  final paymentMethodsLine =
+      config.paymentMethods != null && config.paymentMethods!.isNotEmpty
+      ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
+      : '';
+  final feeBearer = jsonEncode(config.feeBearer.name);
+
+  return '''
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://unpkg.com/@fincra-engineering/checkout@2.2.0/dist/inline.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    function postMessageToFlutter(event, data) {
+      if (window.$fincraJavascriptChannelName) {
+        window.$fincraJavascriptChannelName.postMessage(JSON.stringify({ event: event, data: data }));
+      }
+    }
+
+    function initFincra(attempts = 0) {
+      if (typeof Fincra === 'undefined') {
+        if (attempts > 150) {
+          postMessageToFlutter('error', { message: 'Fincra SDK failed to load.' });
+          return;
+        }
+        setTimeout(function() { initFincra(attempts + 1); }, 100);
+        return;
+      }
+      
+      postMessageToFlutter('ready', null);
+      
+      var options = {
+        key: $key,
+        amount: $amount,
+        currency: $currency,
+        $referenceLine
+        $paymentMethodsLine
+        feeBearer: $feeBearer,
+        customer: {
+          name: $name,
+          email: $email,
+          $phoneLine
+        },
+        onClose: function () {
+          postMessageToFlutter('closed', null);
+        },
+        onSuccess: function (data) {
+          postMessageToFlutter('success', data);
+        }
+      };
+
+      Fincra.initialize(options);
+    }
+
+    window.onload = initFincra;
+  </script>
+</body>
+</html>
+''';
 }

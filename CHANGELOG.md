@@ -8,6 +8,7 @@
 * **Fix**: An inline `success` event without data is now reported as success, not cancellation.
 * **Fix**: Nested values in inline success data are JSON-encoded in `rawResponse`, and null values are dropped.
 * **Fix**: Guarded WebView callbacks against firing after dispose, and prevented a double pop after a system-back on inline checkout.
+* **Fix**: `customerPhoneNumber` is now truly optional for inline checkout. When it's null or blank, `phoneNumber` is left out of the Fincra request instead of being sent as `null` or `""`; when present, it is trimmed.
 * **Docs**: Corrected install version and `InlineCheckoutConfig` parameter types; added a note on verifying payments server-side.
 
 ## 0.1.0

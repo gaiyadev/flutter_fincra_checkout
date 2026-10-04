@@ -111,7 +111,7 @@ Future<void> _startInlinePayment(BuildContext context) async {
       currency: FincraCurrency.ngn,
       customerEmail: "customer@example.com",
       customerName: "John Doe",
-      customerPhoneNumber: "08012345678",
+      customerPhoneNumber: "08012345678", // Optional
       reference: "CUSTOM-REF-123", // Optional
       paymentMethods: ["bank_transfer", "card", "payattitude"], // Optional
     ),
