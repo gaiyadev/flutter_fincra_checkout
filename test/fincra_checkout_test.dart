@@ -27,4 +27,18 @@ void main() {
 
     expect(find.text('Open Checkout'), findsOneWidget);
   });
+  test('InlineCheckout is exported from the package barrel', () {
+    const widget = InlineCheckout(
+      config: InlineCheckoutConfig(
+        publicKey: 'pk_test',
+        amount: 100,
+        currency: FincraCurrency.ngn,
+        customerEmail: 'test@test.com',
+        customerName: 'Test',
+        feeBearer: FeeBearer.customer,
+      ),
+    );
+
+    expect(widget, isA<StatefulWidget>());
+  });
 }

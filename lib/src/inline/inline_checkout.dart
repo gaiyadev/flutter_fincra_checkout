@@ -48,7 +48,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         fincraJavascriptChannelName,
         onMessageReceived: _handleJavascriptMessage,
       )
-      ..loadHtmlString(_generateHtml(widget.config));
+      ..loadHtmlString(buildInlineCheckoutHtml(widget.config));
   }
 
   @override
@@ -58,7 +58,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
   }
 
   void _handleJavascriptMessage(JavaScriptMessage message) {
-    if (_hasCompleted) return;
+    if (_hasCompleted || !mounted) return;
 
     final parsedMessage = FincraBridgeMessage.fromJsonString(message.message);
 
@@ -72,11 +72,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         break;
       case FincraBridgeEvent.success:
         _hasCompleted = true;
-        if (parsedMessage.data != null) {
-          Navigator.of(context).pop(FincraCheckoutSuccess(parsedMessage.data!));
-        } else {
-          Navigator.of(context).pop(FincraCheckoutCancelled());
-        }
+        Navigator.of(context).pop(FincraCheckoutSuccess(parsedMessage.data!));
         break;
       case FincraBridgeEvent.closed:
         _hasCompleted = true;
@@ -85,7 +81,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
       case FincraBridgeEvent.error:
         _hasCompleted = true;
         final message =
-            parsedMessage.data?.message ?? 'An unknown error occurred';
+            parsedMessage.errorMessage ?? 'An unknown error occurred';
         Navigator.of(context).pop(
           FincraCheckoutError(
             FincraPaymentError(code: 'error', message: message),
@@ -98,24 +94,87 @@ class _InlineCheckoutState extends State<InlineCheckout> {
     }
   }
 
-  String _generateHtml(InlineCheckoutConfig config) {
-    // Safely encode inputs as JSON strings to avoid injection issues
-    final key = jsonEncode(config.publicKey);
-    final amount = config.amount;
-    final currency = jsonEncode(config.currency.name.toUpperCase());
-    final name = jsonEncode(config.customerName);
-    final email = jsonEncode(config.customerEmail);
-    final phone = jsonEncode(config.customerPhoneNumber);
-    final referenceLine = config.reference != null
-        ? 'reference: ${jsonEncode(config.reference)},'
-        : '';
-    final paymentMethodsLine =
-        config.paymentMethods != null && config.paymentMethods!.isNotEmpty
-        ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
-        : '';
-    final feeBearer = jsonEncode(config.feeBearer.name);
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      // A system-back pop resolves the route; ignore late JS messages afterwards
+      // so they cannot pop the host app's own screen.
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) _hasCompleted = true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              WebViewWidget(controller: _controller),
+              if (_isLoading)
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: const CircularProgressIndicator(),
+                  ),
+                ),
+              if (_isLoading)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white70,
+                    radius: 20,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.black),
+                      onPressed: () {
+                        if (!_hasCompleted) {
+                          _hasCompleted = true;
+                          Navigator.of(context).pop(FincraCheckoutCancelled());
+                        }
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
-    return '''
+/// Builds the HTML page that loads the Fincra inline SDK for [config].
+@visibleForTesting
+String buildInlineCheckoutHtml(InlineCheckoutConfig config) {
+  // Safely encode inputs as JSON strings to avoid injection issues
+  final key = jsonEncode(config.publicKey);
+  final amount = config.amount;
+  final currency = jsonEncode(config.currency.name.toUpperCase());
+  final name = jsonEncode(config.customerName);
+  final email = jsonEncode(config.customerEmail);
+  // The phone number is optional on Fincra, so omit it rather than send null or "".
+  final phone = config.customerPhoneNumber?.trim();
+  final phoneLine = phone != null && phone.isNotEmpty
+      ? 'phoneNumber: ${jsonEncode(phone)},'
+      : '';
+  final referenceLine = config.reference != null
+      ? 'reference: ${jsonEncode(config.reference)},'
+      : '';
+  final paymentMethodsLine =
+      config.paymentMethods != null && config.paymentMethods!.isNotEmpty
+      ? 'paymentMethods: ${jsonEncode(config.paymentMethods)},'
+      : '';
+  final feeBearer = jsonEncode(config.feeBearer.name);
+
+  return '''
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,7 +218,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         customer: {
           name: $name,
           email: $email,
-          phoneNumber: $phone,
+          $phoneLine
         },
         onClose: function () {
           postMessageToFlutter('closed', null);
@@ -177,54 +236,4 @@ class _InlineCheckoutState extends State<InlineCheckout> {
 </body>
 </html>
 ''';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading)
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: const CircularProgressIndicator(),
-                ),
-              ),
-            if (_isLoading)
-              Positioned(
-                top: 10,
-                right: 10,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white70,
-                  radius: 20,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.black),
-                    onPressed: () {
-                      if (!_hasCompleted) {
-                        _hasCompleted = true;
-                        Navigator.of(context).pop(FincraCheckoutCancelled());
-                      }
-                    },
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 }

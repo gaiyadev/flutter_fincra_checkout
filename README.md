@@ -26,7 +26,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_fincra_checkout: ^1.0.0
+  flutter_fincra_checkout: ^0.1.1
 ```
 
 ## 🛠️ Setup
@@ -111,7 +111,7 @@ Future<void> _startInlinePayment(BuildContext context) async {
       currency: FincraCurrency.ngn,
       customerEmail: "customer@example.com",
       customerName: "John Doe",
-      customerPhoneNumber: "08012345678",
+      customerPhoneNumber: "08012345678", // Optional
       reference: "CUSTOM-REF-123", // Optional
       paymentMethods: ["bank_transfer", "card", "payattitude"], // Optional
     ),
@@ -125,6 +125,8 @@ Future<void> _startInlinePayment(BuildContext context) async {
 ---
 
 ### Result Handling
+
+> ⚠️ **Always verify payments on your backend.** A `FincraCheckoutSuccess` reflects what the checkout page reported to the app. When the redirect URL is reached without a `status` parameter (common in sandbox), the SDK assumes success. Confirm the transaction with the Fincra API (or your webhook) before fulfilling an order.
 
 Both checkout modes return the same `FincraCheckoutResult` type, allowing you to use a single result handler:
 
@@ -181,7 +183,7 @@ The configurations for both modes accept various parameters to help you tailor t
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `checkoutUrl` | `String` | **(Required)** The generated payment URL from your backend. |
-| `redirectUrl` | `String?` | The callback URL your backend sent to Fincra. Used to securely intercept the completion page before Fincra redirects back. |
+| `redirectUrl` | `String?` | The callback URL your backend sent to Fincra. Used to securely intercept the completion page before Fincra redirects back. Matched on scheme, host and path; any sub-path also counts as completion. |
 | `appBarTitle` | `String?` | Sets a custom title for the WebView's AppBar. |
 | `appBarBackgroundColor` | `Color?` | Customizes the background color of the AppBar to match your app's theme. |
 | `closeIcon` | `Widget?` | Replaces the default exit button (e.g., `Icon(Icons.close)`). |
@@ -192,11 +194,11 @@ The configurations for both modes accept various parameters to help you tailor t
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
 | `publicKey` | `String` | **(Required)** Your Fincra public key. |
-| `amount` | `num` | **(Required)** The transaction amount. |
+| `amount` | `double` | **(Required)** The transaction amount. |
 | `currency` | `FincraCurrency` | **(Required)** The currency code enum (e.g., `FincraCurrency.ngn`). |
 | `customerEmail` | `String` | **(Required)** The customer's email. |
 | `customerName` | `String` | **(Required)** The customer's full name. |
-| `customerPhoneNumber` | `String` | **(Required)** The customer's phone number. |
+| `customerPhoneNumber` | `String?` | Optional customer phone number. |
 | `feeBearer` | `FeeBearer` | **(Required)** Determines who pays the fees (`FeeBearer.business` or `FeeBearer.customer`). |
 | `reference` | `String?` | Optional custom transaction reference. |
 | `paymentMethods` | `List<String>?` | Optional list of allowed payment methods (e.g., `["card", "bank_transfer"]`). |

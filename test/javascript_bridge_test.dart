@@ -42,5 +42,40 @@ void main() {
       expect(message.event, FincraBridgeEvent.unknown);
       expect(message.data, isNull);
     });
+    test('keeps the message of an error event', () {
+      final message = FincraBridgeMessage.fromJsonString(
+        '{"event":"error","data":{"message":"Fincra SDK failed to load."}}',
+      );
+
+      expect(message.event, FincraBridgeEvent.error);
+      expect(message.errorMessage, 'Fincra SDK failed to load.');
+      expect(message.data, isNull);
+    });
+
+    test('success without data still yields a response', () {
+      for (final json in [
+        '{"event":"success"}',
+        '{"event":"success","data":null}',
+      ]) {
+        final message = FincraBridgeMessage.fromJsonString(json);
+
+        expect(message.event, FincraBridgeEvent.success);
+        expect(message.data, isNotNull);
+        expect(message.data!.status, 'success');
+      }
+    });
+
+    test('JSON-encodes nested success data and drops nulls', () {
+      final message = FincraBridgeMessage.fromJsonString(
+        '{"event":"success","data":{"reference":"R1","customer":{"name":"A"},'
+        '"tags":[1,2],"message":null}}',
+      );
+
+      final raw = message.data!.rawResponse!;
+      expect(raw['customer'], '{"name":"A"}');
+      expect(raw['tags'], '[1,2]');
+      expect(raw.containsKey('message'), isFalse);
+      expect(message.data!.message, isNull);
+    });
   });
 }
