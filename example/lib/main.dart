@@ -58,7 +58,7 @@ class CheckoutExamplePage extends StatelessWidget {
         customerPhoneNumber: "07058149795",
         reference: 'ORDER-${DateTime.now().millisecondsSinceEpoch}',
         feeBearer: FeeBearer.customer,
-        paymentMethods: ["bank_transfer", "card", "payattitude", 'palmpay'],
+        paymentMethods: ["bank_transfer", "card", 'palmpay'],
       ),
     );
 
