@@ -43,11 +43,13 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
+            if (!mounted) return;
             setState(() {
               _isLoading = true;
             });
           },
           onPageFinished: (String url) {
+            if (!mounted) return;
             setState(() {
               _isLoading = false;
             });
@@ -63,7 +65,10 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
             return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
-            if (_hasCompleted) return;
+            // Failed sub-resources (images, analytics) must not abort the payment.
+            // iOS leaves isForMainFrame null and only reports main-frame failures.
+            if (error.isForMainFrame == false) return;
+            if (_hasCompleted || !mounted) return;
             _hasCompleted = true;
             final err = FincraPaymentError(
               code: error.errorCode.toString(),
@@ -77,13 +82,11 @@ class _CheckoutWebViewState extends State<CheckoutWebView> {
   }
 
   void _handleCompletion(String url) {
-    if (_hasCompleted) return;
+    if (_hasCompleted || !mounted) return;
     _hasCompleted = true;
 
     final params = UrlHandler.extractResponseParams(url);
-    // If we reached the redirect URL, Fincra might not append the status parameter
-    // in sandbox, so we safely assume success if it's missing.
-    final status = params['status']?.toLowerCase() ?? 'success';
+    final status = UrlHandler.extractStatus(params);
 
     if (status == 'success' || status == 'successful') {
       final response = FincraPaymentResponse.fromUrlParams(params);

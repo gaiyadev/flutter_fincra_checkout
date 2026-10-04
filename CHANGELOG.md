@@ -1,3 +1,16 @@
+## 0.1.1
+
+* **Fix**: `InlineCheckout` is now exported from the package, as documented.
+* **Fix**: WebView checkout no longer aborts when a sub-resource (image, script, analytics) fails to load; only main-frame errors end the session.
+* **Fix**: A completion URL with `payment_status=failed` is now reported as an error instead of a success.
+* **Fix**: `redirectUrl` matching now compares scheme, host and path, so lookalike hosts (e.g. `example.com.evil.io`) no longer count as completion.
+* **Fix**: Inline checkout errors now carry the real message (e.g. "Fincra SDK failed to load.") instead of a generic one.
+* **Fix**: An inline `success` event without data is now reported as success, not cancellation.
+* **Fix**: Nested values in inline success data are JSON-encoded in `rawResponse`, and null values are dropped.
+* **Fix**: Guarded WebView callbacks against firing after dispose, and prevented a double pop after a system-back on inline checkout.
+* **Fix**: `customerPhoneNumber` is now truly optional for inline checkout. When it's null or blank, `phoneNumber` is left out of the Fincra request instead of being sent as `null` or `""`; when present, it is trimmed.
+* **Docs**: Corrected install version and `InlineCheckoutConfig` parameter types; added a note on verifying payments server-side.
+
 ## 0.1.0
 
 * **New Feature**: Added support for Fincra Inline JavaScript Checkout.
