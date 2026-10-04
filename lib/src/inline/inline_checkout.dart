@@ -58,7 +58,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
   }
 
   void _handleJavascriptMessage(JavaScriptMessage message) {
-    if (_hasCompleted) return;
+    if (_hasCompleted || !mounted) return;
 
     final parsedMessage = FincraBridgeMessage.fromJsonString(message.message);
 
@@ -72,11 +72,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
         break;
       case FincraBridgeEvent.success:
         _hasCompleted = true;
-        if (parsedMessage.data != null) {
-          Navigator.of(context).pop(FincraCheckoutSuccess(parsedMessage.data!));
-        } else {
-          Navigator.of(context).pop(FincraCheckoutCancelled());
-        }
+        Navigator.of(context).pop(FincraCheckoutSuccess(parsedMessage.data!));
         break;
       case FincraBridgeEvent.closed:
         _hasCompleted = true;
@@ -85,7 +81,7 @@ class _InlineCheckoutState extends State<InlineCheckout> {
       case FincraBridgeEvent.error:
         _hasCompleted = true;
         final message =
-            parsedMessage.data?.message ?? 'An unknown error occurred';
+            parsedMessage.errorMessage ?? 'An unknown error occurred';
         Navigator.of(context).pop(
           FincraCheckoutError(
             FincraPaymentError(code: 'error', message: message),
@@ -181,48 +177,55 @@ class _InlineCheckoutState extends State<InlineCheckout> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            WebViewWidget(controller: _controller),
-            if (_isLoading)
-              Center(
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: const CircularProgressIndicator(),
-                ),
-              ),
-            if (_isLoading)
-              Positioned(
-                top: 10,
-                right: 10,
-                child: CircleAvatar(
-                  backgroundColor: Colors.white70,
-                  radius: 20,
-                  child: IconButton(
-                    icon: const Icon(Icons.close, color: Colors.black),
-                    onPressed: () {
-                      if (!_hasCompleted) {
-                        _hasCompleted = true;
-                        Navigator.of(context).pop(FincraCheckoutCancelled());
-                      }
-                    },
+    return PopScope(
+      // A system-back pop resolves the route; ignore late JS messages afterwards
+      // so they cannot pop the host app's own screen.
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) _hasCompleted = true;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SafeArea(
+          child: Stack(
+            children: [
+              WebViewWidget(controller: _controller),
+              if (_isLoading)
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: const CircularProgressIndicator(),
                   ),
                 ),
-              ),
-          ],
+              if (_isLoading)
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: CircleAvatar(
+                    backgroundColor: Colors.white70,
+                    radius: 20,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.black),
+                      onPressed: () {
+                        if (!_hasCompleted) {
+                          _hasCompleted = true;
+                          Navigator.of(context).pop(FincraCheckoutCancelled());
+                        }
+                      },
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );

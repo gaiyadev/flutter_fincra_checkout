@@ -12,7 +12,10 @@ class FincraBridgeMessage {
   final FincraBridgeEvent event;
   final FincraPaymentResponse? data;
 
-  FincraBridgeMessage({required this.event, this.data});
+  /// The error message carried by an [FincraBridgeEvent.error] event, if any.
+  final String? errorMessage;
+
+  FincraBridgeMessage({required this.event, this.data, this.errorMessage});
 
   /// Parses a raw JSON string message from the JavaScript channel.
   factory FincraBridgeMessage.fromJsonString(String jsonString) {
@@ -20,26 +23,43 @@ class FincraBridgeMessage {
       final Map<String, dynamic> map = jsonDecode(jsonString);
       final eventString = map['event'] as String?;
       final event = _parseEvent(eventString);
+      final rawData = map['data'];
 
       FincraPaymentResponse? data;
-      if (event == FincraBridgeEvent.success && map.containsKey('data')) {
-        final dataMap = map['data'] as Map<String, dynamic>? ?? {};
+      String? errorMessage;
+
+      if (event == FincraBridgeEvent.success) {
+        // A success must always surface as a success, even if Fincra sent no data.
+        final dataMap = rawData is Map ? rawData : const {};
+
+        // Convert to map of strings as FincraPaymentResponse expects it from url params.
+        final params = <String, String>{
+          for (final entry in dataMap.entries)
+            if (entry.value != null)
+              entry.key.toString(): _stringify(entry.value),
+        };
 
         // Ensure status is success for the FincraPaymentResponse
-        dataMap['status'] ??= 'success';
+        params['status'] ??= 'success';
 
-        // Convert to map of strings as FincraPaymentResponse expects it from url params
-        // or we can just map it directly.
-        final params = dataMap.map(
-          (key, value) => MapEntry(key, value.toString()),
-        );
         data = FincraPaymentResponse.fromUrlParams(params);
+      } else if (event == FincraBridgeEvent.error && rawData is Map) {
+        errorMessage = rawData['message']?.toString();
       }
 
-      return FincraBridgeMessage(event: event, data: data);
+      return FincraBridgeMessage(
+        event: event,
+        data: data,
+        errorMessage: errorMessage,
+      );
     } catch (e) {
       return FincraBridgeMessage(event: FincraBridgeEvent.unknown);
     }
+  }
+
+  static String _stringify(Object value) {
+    if (value is Map || value is List) return jsonEncode(value);
+    return value.toString();
   }
 
   static FincraBridgeEvent _parseEvent(String? eventStr) {
