@@ -1,3 +1,10 @@
+## [Unreleased]
+
+* **Docs**: Added `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) and `SECURITY.md` (private vulnerability reporting).
+* **Docs**: Added GitHub issue forms (bug report, feature request), a pull request template and Dependabot configuration.
+* **Docs**: Clarified that this is a community project, not affiliated with, endorsed by, or supported by Fincra; set the license copyright holder to Codeloom Technologies.
+* **Chore**: Added `issue_tracker` to `pubspec.yaml` and refreshed pub.dev topics.
+
 ## 0.1.1
 
 * **Fix**: `InlineCheckout` is now exported from the package, as documented.

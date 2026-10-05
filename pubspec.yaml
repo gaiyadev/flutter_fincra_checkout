@@ -2,13 +2,14 @@ name: flutter_fincra_checkout
 description: "Production-ready Flutter Checkout SDK for Fincra with native in-app WebView, smart callback interception, and strongly typed payment results."
 version: 0.1.1
 repository: https://github.com/gaiyadev/flutter_fincra_checkout
+issue_tracker: https://github.com/gaiyadev/flutter_fincra_checkout/issues
 
 topics:
   - fincra
-  - payment
+  - payments
   - checkout
-  - fintech
-  - gateway
+  - webview
+  - payment-gateway
 
 environment:
   sdk: ^3.8.1
