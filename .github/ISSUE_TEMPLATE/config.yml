@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/gaiyadev/flutter_fincra_checkout/security/advisories/new
+    about: Please report security issues privately, not as public issues.
+  - name: Fincra documentation
+    url: https://docs.fincra.com
+    about: Questions about the Fincra platform, API or your account. This SDK is a community project, not affiliated with Fincra.

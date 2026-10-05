@@ -1,7 +1,11 @@
 # Flutter Fincra Checkout
 
 [![pub package](https://img.shields.io/pub/v/flutter_fincra_checkout.svg)](https://pub.dev/packages/flutter_fincra_checkout)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/gaiyadev/flutter_fincra_checkout/actions/workflows/flutter.yml/badge.svg)](https://github.com/gaiyadev/flutter_fincra_checkout/actions/workflows/flutter.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+
+> **Community project.** Not affiliated with, endorsed by, or supported by Fincra.
 
 A production-ready Flutter package that provides a clean, secure, and highly customizable integration for [Fincra Checkout](https://fincra.com/checkout) payments using an in-app WebView.
 
@@ -229,3 +233,13 @@ The configurations for both modes accept various parameters to help you tailor t
 ## 💡 Example
 
 Check out the `example/` directory for a complete working application demonstrating the payment flow.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read the [Contributing Guide](./CONTRIBUTING.md) and our [Code of Conduct](./CODE_OF_CONDUCT.md) before opening an issue or pull request.
+
+Found a security issue? Please **don't** open a public issue. See [SECURITY.md](./SECURITY.md) for how to report it privately.
+
+## 📄 License
+
+[MIT](./LICENSE) © Codeloom Technologies

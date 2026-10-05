@@ -1,0 +1,81 @@
+name: Bug report
+description: Something in the SDK isn't working as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+
+        > [!WARNING]
+        > **Never paste API keys (public or secret), live checkout links, or customer data.** Use sandbox values or redact them.
+        >
+        > - **Security issues:** don't open an issue. Report them privately via the [Security tab](https://github.com/gaiyadev/flutter_fincra_checkout/security/advisories/new).
+        > - **Fincra platform issues** (API, hosted checkout page, JS SDK, your account): contact Fincra. This is a community project, not affiliated with Fincra.
+  - type: input
+    id: version
+    attributes:
+      label: SDK version
+      description: The `flutter_fincra_checkout` version from your `pubspec.lock`.
+      placeholder: "0.1.1"
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: Checkout mode
+      options:
+        - WebView (FincraCheckout.openWebView / CheckoutWebView)
+        - Inline (FincraCheckout.openInline / InlineCheckout)
+        - Both
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - iOS
+        - Android
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: |
+        - Output of `flutter --version`
+        - `webview_flutter` version (and any other WebView plugin) from `pubspec.lock`
+        - Device or simulator/emulator, and OS version
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened?
+      description: Include the result you got (e.g. `FincraCheckoutError` with its code and message).
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: A minimal code sample and the steps to trigger the bug. Redact keys and checkout links.
+      render: dart
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Relevant console output or stack traces. Redact keys, references and customer data.
+      render: text
