@@ -4,6 +4,8 @@
 //
 // .env.json (gitignored) holds FINCRA_PUBLIC_KEY and FINCRA_CHECKOUT_URL
 // (a fresh hosted link created server-side with your secret key).
+// Kept until the minimum Flutter version allows package:material_ui.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_fincra_checkout/flutter_fincra_checkout.dart';
 import 'package:flutter_test/flutter_test.dart';
