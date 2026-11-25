@@ -1,5 +1,6 @@
-## [Unreleased]
+## 0.1.2
 
+* **Fix**: Cleared the pub.dev static analysis infos about `package:flutter/material.dart` being deprecated on Flutter 3.47+. `WebViewCheckoutConfig` now depends only on `package:flutter/widgets.dart`; the checkout UI keeps Material so the package still supports Flutter 3.32+. No API or behaviour changes.
 * **Docs**: Added `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md` (Contributor Covenant 2.1) and `SECURITY.md` (private vulnerability reporting).
 * **Docs**: Added GitHub issue forms (bug report, feature request), a pull request template and Dependabot configuration.
 * **Docs**: Clarified that this is a community project, not affiliated with, endorsed by, or supported by Fincra; set the license copyright holder to Codeloom Technologies.
