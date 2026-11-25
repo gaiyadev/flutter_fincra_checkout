@@ -1,3 +1,6 @@
+// Material moves to package:material_ui on Flutter 3.47+, which would drop
+// support for Flutter <3.44. Keep the SDK import until the minimum is raised.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import '../models/fincra_response.dart';
 import '../models/fincra_error.dart';

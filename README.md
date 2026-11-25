@@ -30,7 +30,7 @@ Add the dependency to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  flutter_fincra_checkout: ^0.1.1
+  flutter_fincra_checkout: ^0.1.2
 ```
 
 ## 🛠️ Setup

@@ -1,3 +1,5 @@
+// Kept until the minimum Flutter version allows package:material_ui.
+// ignore: deprecated_member_use
 import 'package:flutter/material.dart';
 import 'package:flutter_fincra_checkout/flutter_fincra_checkout.dart';
 
